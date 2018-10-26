@@ -1,0 +1,11 @@
+world:
+  lobby: world
+  x: -252
+  y: 135
+  z: 267
+  
+teams:
+  maxsize: 2
+
+secret:
+  command: cZu7pxloq2v
