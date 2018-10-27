@@ -39,6 +39,31 @@ public class Main extends JavaPlugin
         for(Player p : Bukkit.getServer().getOnlinePlayers())
         {
             p.setExp(0f);
+            
+            if(p.hasMetadata("Team 1"))
+            {
+            	p.removeMetadata("Team 1", this);
+            }
+            
+            if(p.hasMetadata("Team 2"))
+            {
+            	p.removeMetadata("Team 2", this);
+            }
+            
+            if(p.hasMetadata("Team 3"))
+            {
+            	p.removeMetadata("Team 3", this);
+            }
+            
+            if(p.hasMetadata("Team 4"))
+            {
+            	p.removeMetadata("Team 4", this);
+            }
+            
+            if(p.hasMetadata("hasTeam"))
+            {
+            	p.removeMetadata("hasTeam", this);
+            }
         }
 
         Bukkit.getServer().getWorld("world").setPVP(false);

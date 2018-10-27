@@ -208,10 +208,10 @@ public class Commands implements CommandExecutor
                                 team4Members--;
                                 p.removeMetadata("Team 4", Main.getInstance());
                             }
-                        } else if(args[1].equalsIgnoreCase("1"))
-                        {
-                            commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
-                        }
+                    } else if(args[1].equalsIgnoreCase("1"))
+                    {
+                        commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
+                    }
                         
                
 	               if(args[1].equalsIgnoreCase("2") && team2Members < maxTeamMembers)
