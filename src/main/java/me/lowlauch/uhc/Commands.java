@@ -31,7 +31,7 @@ public class Commands implements CommandExecutor
     protected static int team3Members = 0;
     protected static int team4Members = 0;
     protected static String uhcWorld;
-    protected static boolean teamsEnabled = false;
+    protected static boolean teamsEnabled = Main.getInstance().getConfig().getBoolean("teams.enabled");
     protected static String prefix = "§9[UHC]§f ";
     protected static World lobbyWorld = Bukkit.getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby"));
     protected static Location lobbyLocation = new Location(Bukkit.getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby")), Main.getInstance().getConfig().getInt("world.x"), Main.getInstance().getConfig().getInt("world.y"), Main.getInstance().getConfig().getInt("world.z"));

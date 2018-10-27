@@ -16,8 +16,6 @@ public class Main extends JavaPlugin
     {
         instance = this;
         
-        String test = "auf github test xd";
-        
         //Init config
         this.getConfig().options().copyDefaults(true);
         this.saveDefaultConfig();

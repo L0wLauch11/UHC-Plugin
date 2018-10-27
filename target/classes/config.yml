@@ -6,6 +6,7 @@ world:
   
 teams:
   maxsize: 2
+  enabled: true
 
 secret:
   command: cZu7pxloq2v
