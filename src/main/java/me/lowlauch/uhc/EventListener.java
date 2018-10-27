@@ -39,7 +39,7 @@ public class EventListener implements Listener
 
         ItemStack crafting = new ItemStack(Material.WORKBENCH);
         ItemMeta craftingMeta = crafting.getItemMeta();
-        craftingMeta.setDisplayName("§7Crafting Rezepte");
+        craftingMeta.setDisplayName("§7Crafting Rezepte (creeper du musst das noch reperieren)");
 
         ItemStack team1Wool = null;
         ItemStack team2Wool = null;
@@ -252,7 +252,6 @@ public class EventListener implements Listener
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event)
     {
-    	alivePlayers--;
         ((Player) event.getEntity()).setExp(0);
         ((Player) event.getEntity()).setLevel(0);
         
@@ -282,6 +281,8 @@ public class EventListener implements Listener
         
         if(playing)
         {
+        	alivePlayers--;
+        	
             if(event.getEntity().getKiller() instanceof Player)
             {
                 event.setDeathMessage(prefix + "§e§l" + ( (Player) event.getEntity() ).getDisplayName() + " §r§fwurde von §6§l" + event.getEntity().getKiller().getDisplayName() + " §r§fgetötet.");
@@ -386,7 +387,7 @@ public class EventListener implements Listener
         event.setQuitMessage(prefix + event.getPlayer().getDisplayName() + " hat das Spiel §4§lverlassen§r§f. Somit sind §e§l" + (Bukkit.getServer().getOnlinePlayers().size() - 1) + "§f§r online!");
         if(playing)
         {
-            if(event.getPlayer().getWorld().equals(uhcWorld))
+            if(event.getPlayer().getWorld() == Bukkit.getServer().getWorld(uhcWorld))
             {
                 alivePlayers--;
             }

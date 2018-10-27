@@ -41,12 +41,12 @@ public class OnUpdate
 
             if(playing && protectionTime > 0)
             {
-                if(protectionTime == 600)
+                if(protectionTime == Main.getInstance().getConfig().getInt("protection.time"))
                 {
-                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert noch §4§l10§f§r Minuten!");
+                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert noch §4§l" + protectionTime + "§f§r Minuten!");
                 }
 
-                if(protectionTime == 300)
+                if(protectionTime == (int) Main.getInstance().getConfig().getInt("protection.time") / 2)
                 {
                     Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert nurnoch §4§l5§f§r Minuten!");
                 }
@@ -69,7 +69,7 @@ public class OnUpdate
                 pvp = true;
             }
 
-            if(protectionTime >= -600 && protectionTime <= -595)
+            if(protectionTime <= Main.getInstance().getConfig().getInt("protection.border") && protectionTime >= Main.getInstance().getConfig().getInt("protection.border") - 5)
             {
                 Bukkit.getServer().broadcastMessage(prefix + "DIE §4§lBORDER§f§r WIRD VERKLEINERT!");
             }

@@ -3,6 +3,10 @@ world:
   x: -252
   y: 135
   z: 267
+
+protection:
+  time: 600
+  border: -600
   
 teams:
   maxsize: 2

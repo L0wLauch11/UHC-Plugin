@@ -139,6 +139,26 @@ public class Commands implements CommandExecutor
                         commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §aaktiviert§f!");
                     } else
                     {
+                    	for(Player p : Bukkit.getServer().getOnlinePlayers())
+                    	{
+                    		if(p.hasMetadata("hasTeam"))
+                            {
+                                if(p.hasMetadata("Team 1"))
+                                {
+                                    p.removeMetadata("Team 1", Main.getInstance());
+                                } else if(p.hasMetadata("Team 2"))
+                                {
+                                    p.removeMetadata("Team 2", Main.getInstance());
+                                } else if(p.hasMetadata("Team 3"))
+                                {
+                                    p.removeMetadata("Team 3", Main.getInstance());
+                                } else if(p.hasMetadata("Team 4"))
+                                {
+                                    p.removeMetadata("Team 4", Main.getInstance());
+                                }
+                                p.removeMetadata("hasTeam", Main.getInstance());
+                            }
+                    	}
                         commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §cdeaktivert§f!");
                     }
                 }
@@ -188,7 +208,9 @@ public class Commands implements CommandExecutor
                                 p.sendMessage(prefix + "Du bist§e§l Team 1§r§f gejoint!");
                             } else
                             {
-                                p.sendMessage(prefix + "Du bist bereits in diesem §e§lTeam§r§f!");
+                                team1Members--;
+                                p.removeMetadata("Team 1", Main.getInstance());
+                                p.sendMessage(prefix + "Du hast§e§l Team 1 §r§fverlassen!");
                             }
                             
                             if(p.hasMetadata("Team 2"))
@@ -229,9 +251,11 @@ public class Commands implements CommandExecutor
 	                       team2Members++;
 	                       p.sendMessage(prefix + "Du bist§e§l Team 2§r§f gejoint!");
 	                   } else
-	                   {
-	                       p.sendMessage(prefix + "Du bist bereits in diesem §e§lTeam§r§f!");
-	                   }
+                       {
+                           team2Members--;
+                           p.removeMetadata("Team 2", Main.getInstance());
+                           p.sendMessage(prefix + "Du hast§e§l Team 2 §r§fverlassen!");
+                       }
 	                   
 	                   if(p.hasMetadata("Team 1"))
 	                   {
@@ -271,9 +295,11 @@ public class Commands implements CommandExecutor
 	                       team3Members++;
 	                       p.sendMessage(prefix + "Du bist§e§l Team 3§r§f gejoint!");
 	                   } else
-	                   {
-	                       p.sendMessage(prefix + "Du bist bereits in diesem §e§lTeam§r§f!");
-	                   }
+                       {
+                           team3Members--;
+                           p.removeMetadata("Team 3", Main.getInstance());
+                           p.sendMessage(prefix + "Du hast§e§l Team 3 §r§fverlassen!");
+                       }
 	                   
 	                   if(p.hasMetadata("Team 1"))
 	                   {
@@ -313,9 +339,11 @@ public class Commands implements CommandExecutor
 	                       team4Members++;
 	                       p.sendMessage(prefix + "Du bist§e§l Team 4§r§f gejoint!");
 	                   } else
-	                   {
-	                       p.sendMessage(prefix + "Du bist bereits in diesem §e§lTeam§r§f!");
-	                   }
+                       {
+                           team4Members--;
+                           p.removeMetadata("Team 4", Main.getInstance());
+                           p.sendMessage(prefix + "Du hast§e§l Team 4 §r§fverlassen!");
+                       }
 	                   
 	                   if(p.hasMetadata("Team 1"))
 	                   {
@@ -415,7 +443,7 @@ public class Commands implements CommandExecutor
                         Bukkit.getServer().getWorld(uhcWorld).setPVP(pvp);
                     }
 
-                    protectionTime = 600;
+                    protectionTime = Main.getInstance().getConfig().getInt("protection.time");
 
                     alivePlayers = Bukkit.getServer().getOnlinePlayers().size();
                     World world = Bukkit.getServer().getWorld(uhcWorld);
