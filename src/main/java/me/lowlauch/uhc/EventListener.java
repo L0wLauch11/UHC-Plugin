@@ -390,6 +390,12 @@ public class EventListener implements Listener
             {
                 alivePlayers--;
             }
+        } else
+        {
+        	if(event.getPlayer().hasMetadata("isReady"))
+        	{
+        		readyPlayers--;
+        	}
         }
     }
 

@@ -64,6 +64,11 @@ public class Main extends JavaPlugin
             {
             	p.removeMetadata("hasTeam", this);
             }
+            
+            if(p.hasMetadata("isReady"))
+            {
+            	p.removeMetadata("isReady", this);
+            }
         }
 
         Bukkit.getServer().getWorld("world").setPVP(false);
