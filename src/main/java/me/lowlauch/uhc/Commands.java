@@ -157,8 +157,8 @@ public class Commands implements CommandExecutor
                                 {
                                     p.removeMetadata("Team 4", Main.getInstance());
                                 }
-                                p.removeMetadata("hasTeam", Main.getInstance());
                             }
+                    		p.removeMetadata("hasTeam", Main.getInstance());
                     	}
                         commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §cdeaktivert§f!");
                     }
