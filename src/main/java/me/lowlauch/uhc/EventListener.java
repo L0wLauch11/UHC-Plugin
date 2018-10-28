@@ -527,12 +527,19 @@ public class EventListener implements Listener
         {
             int appleChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
             int goldenAppleChance = ThreadLocalRandom.current().nextInt(1, 75 + 1);
-
+            int sugarCaneChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
+            
             if(goldenAppleChance <= 1)
             {
                 event.getBlock().setType(Material.AIR);
                 event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GOLDEN_APPLE));
                 appleChance = 420;
+            }
+            
+            if(sugarCaneChance <= 1)
+            {
+            	event.getBlock().setType(Material.AIR);
+            	event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SUGAR_CANE));
             }
 
             if(appleChance <= 1)

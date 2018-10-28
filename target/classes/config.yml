@@ -11,6 +11,11 @@ protection:
 teams:
   maxsize: 2
   enabled: true
+  
+starter:
+  items: true
+  item1: STONE_AXE
+  item2: STONE_PICKAXE
 
 secret:
   command: cZu7pxloq2v

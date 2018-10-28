@@ -1,6 +1,5 @@
 package me.lowlauch.uhc;
 
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,7 +12,6 @@ public class OnUpdate
     static double borderDistanceXN;
     static double borderDistanceZP;
     static double borderDistanceZN;
-    static TextComponent title;
     public static void run()
     {
         if(playing)

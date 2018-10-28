@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 
@@ -415,6 +416,7 @@ public class Commands implements CommandExecutor
                     commandSender.sendMessage(prefix + "Falsche Argumente!");
                 }
             }
+            
             if(commandInput.equalsIgnoreCase("startuhc"))
             {
                 if(!playing)
@@ -433,6 +435,13 @@ public class Commands implements CommandExecutor
                             p.removePotionEffect(effect.getType());
                         }
                         readyPlayers = 0;
+                        
+                        if(Main.getInstance().getConfig().getBoolean("starter.items"))
+                        {
+                        	p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item1"))));
+                            p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item2"))));
+                        }
+                        
                         p.removeMetadata("isReady", Main.getInstance());
                         p.setHealth(20f);
                         p.setFoodLevel(20);
