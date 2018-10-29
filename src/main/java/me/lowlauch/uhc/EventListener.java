@@ -39,7 +39,7 @@ public class EventListener implements Listener
 
         ItemStack crafting = new ItemStack(Material.WORKBENCH);
         ItemMeta craftingMeta = crafting.getItemMeta();
-        craftingMeta.setDisplayName("§7Crafting Rezepte (creeper du musst das noch reperieren)");
+        craftingMeta.setDisplayName("§7Crafting Rezepte");
 
         ItemStack team1Wool = null;
         ItemStack team2Wool = null;
