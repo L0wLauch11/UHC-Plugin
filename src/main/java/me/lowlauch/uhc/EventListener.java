@@ -255,32 +255,32 @@ public class EventListener implements Listener
         ((Player) event.getEntity()).setExp(0);
         ((Player) event.getEntity()).setLevel(0);
         
-        if(((Player) event.getEntity()).hasMetadata("Team 1"))
-        {
-        	team1Members--;
-        	((Player) event.getEntity()).removeMetadata("Team 1", Main.getInstance());
-        }
-        
-        if(((Player) event.getEntity()).hasMetadata("Team 2"))
-        {
-        	team2Members--;
-        	((Player) event.getEntity()).removeMetadata("Team 2", Main.getInstance());
-        }
-        
-        if(((Player) event.getEntity()).hasMetadata("Team 3"))
-        {
-        	team3Members--;
-        	((Player) event.getEntity()).removeMetadata("Team 3", Main.getInstance());
-        }
-        
-        if(((Player) event.getEntity()).hasMetadata("Team 4"))
-        {
-        	team4Members--;
-        	((Player) event.getEntity()).removeMetadata("Team 4", Main.getInstance());
-        }
-        
         if(playing)
         {
+        	if(((Player) event.getEntity()).hasMetadata("Team 1"))
+            {
+            	team1Members--;
+            	((Player) event.getEntity()).removeMetadata("Team 1", Main.getInstance());
+            }
+            
+            if(((Player) event.getEntity()).hasMetadata("Team 2"))
+            {
+            	team2Members--;
+            	((Player) event.getEntity()).removeMetadata("Team 2", Main.getInstance());
+            }
+            
+            if(((Player) event.getEntity()).hasMetadata("Team 3"))
+            {
+            	team3Members--;
+            	((Player) event.getEntity()).removeMetadata("Team 3", Main.getInstance());
+            }
+            
+            if(((Player) event.getEntity()).hasMetadata("Team 4"))
+            {
+            	team4Members--;
+            	((Player) event.getEntity()).removeMetadata("Team 4", Main.getInstance());
+            }
+        	
         	alivePlayers--;
         	
             if(event.getEntity().getKiller() instanceof Player)
@@ -360,24 +360,27 @@ public class EventListener implements Listener
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event)
     {
-        event.setJoinMessage(prefix + event.getPlayer().getDisplayName() + " hat das Spiel §a§lbetreten§r§f. Somit sind §e§l" + Bukkit.getServer().getOnlinePlayers().size() + "§f§r Spieler online!");
-        if(playing)
+        if(event.getPlayer().getWorld() == lobbyWorld)
         {
-        	event.getPlayer().setGameMode(GameMode.SURVIVAL);
-            if(event.getPlayer().getWorld() == Bukkit.getServer().getWorld(uhcWorld))
+        	event.setJoinMessage(prefix + event.getPlayer().getDisplayName() + " hat das Spiel §a§lbetreten§r§f. Somit sind §e§l" + Bukkit.getServer().getOnlinePlayers().size() + "§f§r Spieler online!");
+            if(playing)
             {
-                alivePlayers++;
+            	event.getPlayer().setGameMode(GameMode.SURVIVAL);
+                if(event.getPlayer().getWorld() == Bukkit.getServer().getWorld(uhcWorld))
+                {
+                    alivePlayers++;
+                }
             }
-        }
-        
-        if(!playing && event.getPlayer().getWorld() != Main.getInstance().getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby")))
-        {
-        	event.getPlayer().teleport(lobbyLocation);
-        }
-        
-        if(!playing)
-        {
-        	event.getPlayer().setGameMode(GameMode.ADVENTURE);
+            
+            if(!playing && event.getPlayer().getWorld() != Main.getInstance().getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby")))
+            {
+            	event.getPlayer().teleport(lobbyLocation);
+            }
+            
+            if(!playing)
+            {
+            	event.getPlayer().setGameMode(GameMode.ADVENTURE);
+            }
         }
     }
 
@@ -412,19 +415,22 @@ public class EventListener implements Listener
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(event.getAction() == Action.PHYSICAL && !playing && event.getClickedBlock().getType() != Material.STONE_PLATE)
+        if(event.getPlayer().getWorld() == lobbyWorld)
         {
-            event.setCancelled(true);
-        }
+        	if(event.getAction() == Action.PHYSICAL && !playing && event.getClickedBlock().getType() != Material.STONE_PLATE)
+            {
+                event.setCancelled(true);
+            }
 
-        if(event.getMaterial() == Material.DIAMOND && !playing)
-        {
-            Bukkit.getServer().dispatchCommand(event.getPlayer(), "wannastart");
-        }
-        
-        if(event.getMaterial() == Material.COMPASS)
-        {
-        	newInventory(event.getPlayer());
+            if(event.getMaterial() == Material.DIAMOND && !playing)
+            {
+                Bukkit.getServer().dispatchCommand(event.getPlayer(), "wannastart");
+            }
+            
+            if(event.getMaterial() == Material.COMPASS)
+            {
+            	newInventory(event.getPlayer());
+            }
         }
     }
 
@@ -436,7 +442,7 @@ public class EventListener implements Listener
         Inventory thisInv = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if(thisInv.getName().equals("§aSelector"))
+        if(thisInv.getName().equals("§aSelector") && p.getWorld() == lobbyWorld)
         {
             if(clickedItem == null || !clickedItem.hasItemMeta())
             {
@@ -490,63 +496,66 @@ public class EventListener implements Listener
     public void onPlayerBreak(BlockBreakEvent event)
     {
         if(!playing && event.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && event.getPlayer().getWorld().equals(lobbyWorld)) { event.setCancelled(true); }
-        if(event.getBlock().getType() == Material.IRON_ORE)
+        if(playing)
         {
-            int diamondChance = ThreadLocalRandom.current().nextInt(1, 50 + 1);
-            if(diamondChance > 1)
+        	if(event.getBlock().getType() == Material.IRON_ORE)
             {
-                event.getBlock().setType(Material.AIR);
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT));
-            } else
-            {
-                event.getBlock().setType(Material.AIR);
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.DIAMOND));
-            }
-        }
-
-        if(event.getBlock().getType() == Material.SAND)
-        {
-            if(event.getPlayer().getItemInHand().getType() == Material.STONE_SPADE || event.getPlayer().getItemInHand().getType() == Material.DIAMOND_SPADE || event.getPlayer().getItemInHand().getType() == Material.IRON_SPADE || event.getPlayer().getItemInHand().getType() == Material.WOOD_SPADE || event.getPlayer().getItemInHand().getType() == Material.GOLD_SPADE)
-            {
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GLASS));
-                event.getBlock().setType(Material.AIR);
-            } else
-            {
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SAND));
-                event.getBlock().setType(Material.AIR);
-            }
-        }
-
-        if(event.getBlock().getType() == Material.GOLD_ORE)
-        {
-            event.getBlock().setType(Material.AIR);
-            event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
-        }
-
-        if(event.getBlock().getType() == Material.LEAVES && event.getPlayer().getItemInHand() != new ItemStack(Material.SHEARS) || event.getBlock().getType() == Material.LEAVES_2 && event.getPlayer().getItemInHand() != new ItemStack(Material.SHEARS))
-        {
-            int appleChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
-            int goldenAppleChance = ThreadLocalRandom.current().nextInt(1, 75 + 1);
-            int sugarCaneChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
-            
-            if(goldenAppleChance <= 1)
-            {
-                event.getBlock().setType(Material.AIR);
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GOLDEN_APPLE));
-                appleChance = 420;
-            }
-            
-            if(sugarCaneChance <= 1)
-            {
-            	event.getBlock().setType(Material.AIR);
-            	event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SUGAR_CANE));
+                int diamondChance = ThreadLocalRandom.current().nextInt(1, 50 + 1);
+                if(diamondChance > 1)
+                {
+                    event.getBlock().setType(Material.AIR);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.IRON_INGOT));
+                } else
+                {
+                    event.getBlock().setType(Material.AIR);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.DIAMOND));
+                }
             }
 
-            if(appleChance <= 1)
+            if(event.getBlock().getType() == Material.SAND)
+            {
+                if(event.getPlayer().getItemInHand().getType() == Material.STONE_SPADE || event.getPlayer().getItemInHand().getType() == Material.DIAMOND_SPADE || event.getPlayer().getItemInHand().getType() == Material.IRON_SPADE || event.getPlayer().getItemInHand().getType() == Material.WOOD_SPADE || event.getPlayer().getItemInHand().getType() == Material.GOLD_SPADE)
+                {
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GLASS));
+                    event.getBlock().setType(Material.AIR);
+                } else
+                {
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SAND));
+                    event.getBlock().setType(Material.AIR);
+                }
+            }
+
+            if(event.getBlock().getType() == Material.GOLD_ORE)
             {
                 event.getBlock().setType(Material.AIR);
-                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.APPLE));
-                goldenAppleChance = 1337;
+                event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GOLD_INGOT));
+            }
+
+            if(event.getBlock().getType() == Material.LEAVES && event.getPlayer().getItemInHand() != new ItemStack(Material.SHEARS) || event.getBlock().getType() == Material.LEAVES_2 && event.getPlayer().getItemInHand() != new ItemStack(Material.SHEARS))
+            {
+                int appleChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
+                int goldenAppleChance = ThreadLocalRandom.current().nextInt(1, 75 + 1);
+                int sugarCaneChance = ThreadLocalRandom.current().nextInt(1, 25 + 1);
+                
+                if(goldenAppleChance <= 1)
+                {
+                    event.getBlock().setType(Material.AIR);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.GOLDEN_APPLE));
+                    appleChance = 420;
+                }
+                
+                if(sugarCaneChance <= 1)
+                {
+                	event.getBlock().setType(Material.AIR);
+                	event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.SUGAR_CANE));
+                }
+
+                if(appleChance <= 1)
+                {
+                    event.getBlock().setType(Material.AIR);
+                    event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), new ItemStack(Material.APPLE));
+                    goldenAppleChance = 1337;
+                }
             }
         }
     }

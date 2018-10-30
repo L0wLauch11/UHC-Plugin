@@ -41,12 +41,12 @@ public class OnUpdate
             {
                 if(protectionTime == Main.getInstance().getConfig().getInt("protection.time"))
                 {
-                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert noch §4§l" + protectionTime + "§f§r Minuten!");
+                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert noch §4§l" + protectionTime / 60 + "§f§r Minuten!");
                 }
 
                 if(protectionTime == (int) Main.getInstance().getConfig().getInt("protection.time") / 2)
                 {
-                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert nurnoch §4§l5§f§r Minuten!");
+                    Bukkit.getServer().broadcastMessage(prefix + "Die §e§lSchutzzeit§r§f dauert nurnoch §4§l" + protectionTime / 60 / 2 + "§f§r Minuten!");
                 }
 
                 if(protectionTime == 60)
