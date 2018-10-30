@@ -415,22 +415,19 @@ public class EventListener implements Listener
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event)
     {
-        if(event.getPlayer().getWorld() == lobbyWorld)
+    	if(event.getAction() == Action.PHYSICAL && !playing && event.getClickedBlock().getType() != Material.STONE_PLATE)
         {
-        	if(event.getAction() == Action.PHYSICAL && !playing && event.getClickedBlock().getType() != Material.STONE_PLATE)
-            {
-                event.setCancelled(true);
-            }
+            event.setCancelled(true);
+        }
 
-            if(event.getMaterial() == Material.DIAMOND && !playing)
-            {
-                Bukkit.getServer().dispatchCommand(event.getPlayer(), "uhc ready");
-            }
-            
-            if(event.getMaterial() == Material.COMPASS)
-            {
-            	newInventory(event.getPlayer());
-            }
+        if(event.getMaterial() == Material.DIAMOND && !playing)
+        {
+            Bukkit.getServer().dispatchCommand(event.getPlayer(), "uhc ready");
+        }
+        
+        if(event.getMaterial() == Material.COMPASS)
+        {
+        	newInventory(event.getPlayer());
         }
     }
 
@@ -442,7 +439,7 @@ public class EventListener implements Listener
         Inventory thisInv = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
-        if(thisInv.getName().equals("§aSelector") && p.getWorld() == lobbyWorld)
+        if(thisInv.getName().equals("§aSelector"))
         {
             if(clickedItem == null || !clickedItem.hasItemMeta())
             {
