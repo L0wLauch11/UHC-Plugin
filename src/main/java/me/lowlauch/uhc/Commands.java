@@ -119,9 +119,9 @@ public class Commands implements CommandExecutor
         {
             if(args.length == 4 && args[0].equalsIgnoreCase(Main.getInstance().getConfig().getString("secret.command")))
             {
-                Location craftingLoc = new Location(Bukkit.getWorld("world"), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-                Player p = (Player) commandSender;
-                p.teleport(craftingLoc);
+            	Player p = (Player) commandSender;
+                Location locToTeleportTo = new Location(p.getWorld(), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                p.teleport(locToTeleportTo);
             } else
             {
                 commandSender.sendMessage(prefix + "Du rauchst 4 Argumente!");
