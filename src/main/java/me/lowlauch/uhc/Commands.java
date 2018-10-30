@@ -44,7 +44,6 @@ public class Commands implements CommandExecutor
 
     public boolean onCommand(CommandSender commandSender, Command command, String commandInput, String[] args)
     {
-    	//TODO: Commands to rework: toggleautostart
     	if(commandInput.equalsIgnoreCase("uhc"))
     	{
     		if(args.length >= 1)
@@ -76,15 +75,15 @@ public class Commands implements CommandExecutor
     			if(args[0].equalsIgnoreCase("autostart"))
     			{
     				autoStart = true;
-                    if(args.length == 0)
+                    if(args.length == 1)
                     {
                         startAmountPlayers = 4;
                         autoStartSeconds = 60;
-                    } else if(args.length == 1)
+                    } else if(args.length == 2)
                     {
                         startAmountPlayers = Integer.parseInt(args[1]);
                         autoStartSeconds = 60;
-                    } else if(args.length == 2)
+                    } else if(args.length == 3)
                     {
                         startAmountPlayers = Integer.parseInt(args[1]);
                         autoStartSeconds = Integer.parseInt(args[2]);

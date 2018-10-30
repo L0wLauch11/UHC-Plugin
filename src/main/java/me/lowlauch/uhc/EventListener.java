@@ -424,7 +424,7 @@ public class EventListener implements Listener
 
             if(event.getMaterial() == Material.DIAMOND && !playing)
             {
-                Bukkit.getServer().dispatchCommand(event.getPlayer(), "wannastart");
+                Bukkit.getServer().dispatchCommand(event.getPlayer(), "uhc ready");
             }
             
             if(event.getMaterial() == Material.COMPASS)

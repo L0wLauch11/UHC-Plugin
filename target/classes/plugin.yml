@@ -6,19 +6,15 @@ commands:
   uhc:
     description: Der main UHC Befehl
     usage: 
-    
   teleport:
     description: Teleportiert zu Welt
-    usage:
-    
+    usage: 
   secret: 
     description: Setzt die Koordinaten der Craftingrezepte und Teleportiert dich dort hin geiheimer Befehl uwu xd
-    usage:
-    
+    usage: 
   heal:
     description: Heal Befehl
     usage: 
-    
   remake: 
-    description: Macht das Spiel neu wenn die Welt scheiﬂe ist
+    description: Macht das Spiel neu wenn die Welt scheisse ist
     usage: 
