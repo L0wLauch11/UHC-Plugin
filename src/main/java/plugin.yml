@@ -3,39 +3,18 @@ main: me.lowlauch.uhc.Main
 version: 0.1-ALPHA
 author: lowlauch
 commands:
-  startuhc:
-    description: Teleportiert dich zur eingegebenen Welt
-    usage:
-  heal:
-    description: Heilt einen Spieler
-    usage:
-  wannastart:
-    description: Wenn der Spieler bereit ist
-    usage:
-  bc:
-    description: Broadcast Message
-    usage:
-  enduhc:
-    description: Beendet UHC
-    usage:
+  uhc:
+    description: Der main UHC Befehl
+    usage: 
   teleport:
     description: Teleportiert zu Welt
-    usage:
+    usage: 
   secret: 
     description: Setzt die Koordinaten der Craftingrezepte und Teleportiert dich dort hin geiheimer Befehl uwu xd
-    usage:
-  autostartuhc:
-    description: Teleportiert dich zur eingegebenen Welt
-    usage:
-  toggleautostart:
-    description: Aktiviert oder Deaktiviert Autostart
-    usage:
-  remake:
-    description: Macht das Spiel neu wenn die Welt scheiße ist
-    usage:
-  team:
-    description: Team Befehl
-    usage:
-  teams:
-    description: Anderer Team Befehl
-    usage:
+    usage: 
+  heal:
+    description: Heal Befehl
+    usage: 
+  remake: 
+    description: Macht das Spiel neu wenn die Welt scheisse ist
+    usage: 

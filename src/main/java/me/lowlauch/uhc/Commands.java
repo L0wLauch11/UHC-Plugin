@@ -44,29 +44,399 @@ public class Commands implements CommandExecutor
 
     public boolean onCommand(CommandSender commandSender, Command command, String commandInput, String[] args)
     {
-        if(commandInput.equalsIgnoreCase("wannastart"))
-        {
-            Player p = (Player) commandSender;
-            if(p.getExp() == 0f)
-            {
-                p.setMetadata("isReady", new FixedMetadataValue(Main.getInstance(), "yos!"));
-                p.setExp(1f);
-            } else if(p.getExp() == 1f)
-            {
-                p.removeMetadata("isReady", Main.getInstance());
-                p.setExp(0f);
-            }
+    	if(commandInput.equalsIgnoreCase("uhc"))
+    	{
+    		if(args.length >= 1)
+    		{
+    			if(args[0].equalsIgnoreCase("ready"))
+    			{
+    				Player p = (Player) commandSender;
+    	            if(p.getExp() == 0f)
+    	            {
+    	                p.setMetadata("isReady", new FixedMetadataValue(Main.getInstance(), "yos!"));
+    	                p.setExp(1f);
+    	            } else if(p.getExp() == 1f)
+    	            {
+    	                p.removeMetadata("isReady", Main.getInstance());
+    	                p.setExp(0f);
+    	            }
 
-            if(p.getExp() == 1f)
-            {
-                readyPlayers++;
-                Bukkit.getServer().broadcastMessage("§4§l" + ((Player)commandSender).getDisplayName() + " §r§fist bereit! (" + readyPlayers + "/" + Bukkit.getServer().getOnlinePlayers().size() + ")");
-            } else if(p.getExp() == 0f)
-            {
-                readyPlayers--;
-                Bukkit.getServer().broadcastMessage("§4§l" + ((Player)commandSender).getDisplayName() + " §r§fist nichtmehr bereit! (" + readyPlayers + "/" + Bukkit.getServer().getOnlinePlayers().size() + ")");
-            }
-        }
+    	            if(p.getExp() == 1f)
+    	            {
+    	                readyPlayers++;
+    	                Bukkit.getServer().broadcastMessage("§4§l" + ((Player)commandSender).getDisplayName() + " §r§fist bereit! (" + readyPlayers + "/" + Bukkit.getServer().getOnlinePlayers().size() + ")");
+    	            } else if(p.getExp() == 0f)
+    	            {
+    	                readyPlayers--;
+    	                Bukkit.getServer().broadcastMessage("§4§l" + ((Player)commandSender).getDisplayName() + " §r§fist nichtmehr bereit! (" + readyPlayers + "/" + Bukkit.getServer().getOnlinePlayers().size() + ")");
+    	            }
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("autostart"))
+    			{
+    				autoStart = true;
+                    if(args.length == 1)
+                    {
+                        startAmountPlayers = 4;
+                        autoStartSeconds = 60;
+                    } else if(args.length == 2)
+                    {
+                        startAmountPlayers = Integer.parseInt(args[1]);
+                        autoStartSeconds = 60;
+                    } else if(args.length == 3)
+                    {
+                        startAmountPlayers = Integer.parseInt(args[1]);
+                        autoStartSeconds = Integer.parseInt(args[2]);
+                        commandSender.sendMessage(prefix + "Du willst dass das §aSpiel§f in " + args[2] + "s startet.");
+                    }
+                    uhcWorld = getSaltString();
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("toggleautostart"))
+    			{
+    				autoStart = !autoStart;
+                    if(autoStart)
+                    {
+                        Bukkit.getServer().broadcastMessage(prefix + "Der §1Countdown§f wurde §a§lgestartet§r§f!");
+                    }
+                    if(!autoStart)
+                    {
+                        Bukkit.getServer().broadcastMessage(prefix + "Der §1Countdown§f wurde §4§lgestoppt§r§f!");
+                    }
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("stop"))
+    			{
+    				playing = false;
+                    for(Player p : Bukkit.getServer().getOnlinePlayers())
+                    {
+                        lobbyLocation = new Location(Main.getInstance().getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby")), Main.getInstance().getConfig().getInt("world.x"), Main.getInstance().getConfig().getInt("world.y"), Main.getInstance().getConfig().getInt("world.z"));
+                        p.teleport(lobbyLocation);
+                        p.setGameMode(GameMode.ADVENTURE);
+                        p.setExp(0f);
+                        clearArmor(p);
+                        readyPlayers = 0;
+                        p.sendMessage(prefix + "Du wurdest zur §2§lLobby§r§f §nteleportiert§r.");
+                    }
+                    Bukkit.getServer().broadcastMessage(prefix + "Das Spiel wurde frühzeitig §4beendet§r!");
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("start") && commandSender.isOp())
+    			{
+    				if(!playing)
+                    {
+                        Bukkit.getServer().broadcastMessage(prefix + "Das §aSpiel§f §e§l§n§ostartet!§r§f Es wird kurz §c§llaggen§r§f!");
+                        uhcWorld = getSaltString();
+                        createWorld(uhcWorld);
+                        loc = new Location(Bukkit.getWorld(uhcWorld), 0, 55, 0);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "parkour peod");
+                        for(Player p : Main.getInstance().getServer().getOnlinePlayers())
+                        {
+                            p.setExp(0f);
+                            p.getInventory().clear();
+                            for (PotionEffect effect : p.getActivePotionEffects())
+                            {
+                                p.removePotionEffect(effect.getType());
+                            }
+                            readyPlayers = 0;
+                            
+                            if(Main.getInstance().getConfig().getBoolean("starter.items"))
+                            {
+                            	p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item1"))));
+                                p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item2"))));
+                            }
+                            
+                            p.removeMetadata("isReady", Main.getInstance());
+                            p.setHealth(20f);
+                            p.setFoodLevel(20);
+                            p.setExp(0);
+                            p.setLevel(0);
+                            p.setGameMode(GameMode.SURVIVAL);
+                            p.teleport(loc);
+                            Bukkit.getServer().getWorld(uhcWorld).setPVP(pvp);
+                        }
+
+                        protectionTime = Main.getInstance().getConfig().getInt("protection.time");
+
+                        alivePlayers = Bukkit.getServer().getOnlinePlayers().size();
+                        World world = Bukkit.getServer().getWorld(uhcWorld);
+                        world.getWorldBorder().setCenter(0, 0);
+                        world.getWorldBorder().setSize(150*alivePlayers);
+                        Bukkit.getServer().broadcastMessage(prefix + "Die §4§lBORDER§f§r ist §6" + (int) world.getWorldBorder().getSize() + " §f§rBlöcke im §nDurchmesser§r groÃ?");
+
+                        Bukkit.getServer().broadcastMessage(prefix + "Das §aSpiel§f hat soeben §l§agestartet§r§f.");
+                        playing = true;
+                    } else {
+                        commandSender.sendMessage(prefix + "Du hast bereits ein §aSpiel§f gestartet!");
+                    }
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("bc") && commandSender.isOp())
+    			{
+    				StringBuilder message = new StringBuilder(args[0]);
+                    for (int arg = 1; arg < args.length; arg++)
+                    {
+                        message.append(" ").append(args[arg]);
+                    }
+                    Bukkit.getServer().broadcastMessage(prefix + "" + message);
+    			}
+    			
+    			if(args[0].equalsIgnoreCase("team") || args[0].equalsIgnoreCase("teams"))
+    			{
+    				if(args.length >= 2)
+    	            {    
+    	                if(args[1].equalsIgnoreCase("toggle") && commandSender.isOp())
+    	                {
+    	                    teamsEnabled = !teamsEnabled;
+    	                    if(teamsEnabled)
+    	                    {
+    	                        commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §aaktiviert§f!");
+    	                    } else
+    	                    {
+    	                    	for(Player p : Bukkit.getServer().getOnlinePlayers())
+    	                    	{
+    	                    		if(p.hasMetadata("hasTeam"))
+    	                            {
+    	                                if(p.hasMetadata("Team 1"))
+    	                                {
+    	                                    p.removeMetadata("Team 1", Main.getInstance());
+    	                                } else if(p.hasMetadata("Team 2"))
+    	                                {
+    	                                    p.removeMetadata("Team 2", Main.getInstance());
+    	                                } else if(p.hasMetadata("Team 3"))
+    	                                {
+    	                                    p.removeMetadata("Team 3", Main.getInstance());
+    	                                } else if(p.hasMetadata("Team 4"))
+    	                                {
+    	                                    p.removeMetadata("Team 4", Main.getInstance());
+    	                                }
+    	                            }
+    	                    		p.removeMetadata("hasTeam", Main.getInstance());
+    	                    	}
+    	                        commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §cdeaktivert§f!");
+    	                    }
+    	                }
+    	                
+    	                if(args[1].equalsIgnoreCase("reset") || args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("none"))
+    	                {
+    	                    Player p = (Player) commandSender;  //  p.setMetadata("wannaremake", new FixedMetadataValue(Main.getInstance(), "yes!"));
+    	                    
+    	                    if(p.hasMetadata("hasTeam"))
+    	                    {
+    	                        if(p.hasMetadata("Team 1"))
+    	                        {
+    	                            p.removeMetadata("Team 1", Main.getInstance());
+    	                        } else if(p.hasMetadata("Team 2"))
+    	                        {
+    	                            p.removeMetadata("Team 2", Main.getInstance());
+    	                        } else if(p.hasMetadata("Team 3"))
+    	                        {
+    	                            p.removeMetadata("Team 3", Main.getInstance());
+    	                        } else if(p.hasMetadata("Team 4"))
+    	                        {
+    	                            p.removeMetadata("Team 4", Main.getInstance());
+    	                        }
+    	                        p.removeMetadata("hasTeam", Main.getInstance());
+    	                    }
+    	                    
+    	                    p.sendMessage(prefix + "Du hast dein §e§lTeam§r§f zurückgesetzt!");
+    	                }
+    	                
+    	                if(args[1].equalsIgnoreCase("join"))
+    	                {
+    	                    if(teamsEnabled)
+    	                    {
+    	                        if(args[2].equalsIgnoreCase("1") && team1Members < maxTeamMembers)
+    	                        {
+    	                            Player p = (Player) commandSender;  //  p.setMetadata("wannaremake", new FixedMetadataValue(Main.getInstance(), "yes!"));
+    	                            
+    	                            if(!p.hasMetadata("hasTeam"))
+    	                            {
+    	                                p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
+    	                            }
+    	                            
+    	                            if(!p.hasMetadata("Team 1"))
+    	                            {
+    	                                p.setMetadata("Team 1", new FixedMetadataValue(Main.getInstance(), "teams"));
+    	                                team1Members++;
+    	                                p.sendMessage(prefix + "Du bist§e§l Team 1§r§f gejoint!");
+    	                            } else
+    	                            {
+    	                                team1Members--;
+    	                                p.removeMetadata("Team 1", Main.getInstance());
+    	                                p.sendMessage(prefix + "Du hast§e§l Team 1 §r§fverlassen!");
+    	                            }
+    	                            
+    	                            if(p.hasMetadata("Team 2"))
+    	                            {
+    	                                team2Members--;
+    	                                p.removeMetadata("Team 2", Main.getInstance());
+    	                            }
+    	                            
+    	                            if(p.hasMetadata("Team 3"))
+    	                            {
+    	                                team3Members--;
+    	                                p.removeMetadata("Team 3", Main.getInstance());
+    	                            }
+    	                            
+    	                            if(p.hasMetadata("Team 4"))
+    	                            {
+    	                                team4Members--;
+    	                                p.removeMetadata("Team 4", Main.getInstance());
+    	                            }
+    	                    } else if(args[2].equalsIgnoreCase("1"))
+    	                    {
+    	                        commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
+    	                    }
+    	                        
+    	               
+    		               if(args[2].equalsIgnoreCase("2") && team2Members < maxTeamMembers)
+    		               {
+    		                   Player p = (Player) commandSender;
+    		                   
+    		                   if(!p.hasMetadata("hasTeam"))
+    		                   {
+    		                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                   }
+    		                   
+    		                   if(!p.hasMetadata("Team 2"))
+    		                   {
+    		                       p.setMetadata("Team 2", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                       team2Members++;
+    		                       p.sendMessage(prefix + "Du bist§e§l Team 2§r§f gejoint!");
+    		                   } else
+    	                       {
+    	                           team2Members--;
+    	                           p.removeMetadata("Team 2", Main.getInstance());
+    	                           p.sendMessage(prefix + "Du hast§e§l Team 2 §r§fverlassen!");
+    	                       }
+    		                   
+    		                   if(p.hasMetadata("Team 1"))
+    		                   {
+    		                       team1Members--;
+    		                       p.removeMetadata("Team 1", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 3"))
+    		                   {
+    		                       team3Members--;
+    		                       p.removeMetadata("Team 3", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 4"))
+    		                   {
+    		                       team4Members--;
+    		                       p.removeMetadata("Team 4", Main.getInstance());
+    		                   }
+    		               } else if(args[2].equalsIgnoreCase("2"))
+    		               {
+    		                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
+    		               }
+    		               
+    		               
+    		               if(args[2].equalsIgnoreCase("3") && team3Members < maxTeamMembers)
+    		               {
+    		                   Player p = (Player) commandSender;
+    		                   
+    		                   if(!p.hasMetadata("hasTeam"))
+    		                   {
+    		                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                   }
+    		                   
+    		                   if(!p.hasMetadata("Team 3"))
+    		                   {
+    		                       p.setMetadata("Team 3", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                       team3Members++;
+    		                       p.sendMessage(prefix + "Du bist§e§l Team 3§r§f gejoint!");
+    		                   } else
+    	                       {
+    	                           team3Members--;
+    	                           p.removeMetadata("Team 3", Main.getInstance());
+    	                           p.sendMessage(prefix + "Du hast§e§l Team 3 §r§fverlassen!");
+    	                       }
+    		                   
+    		                   if(p.hasMetadata("Team 1"))
+    		                   {
+    		                       team1Members--;
+    		                       p.removeMetadata("Team 1", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 2"))
+    		                   {
+    		                       team2Members--;
+    		                       p.removeMetadata("Team 2", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 4"))
+    		                   {
+    		                       team4Members--;
+    		                       p.removeMetadata("Team 4", Main.getInstance());
+    		                   }
+    		               } else if(args[2].equalsIgnoreCase("3"))
+    		               {
+    		                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
+    		               }
+    		               
+    		               
+    		               if(args[2].equalsIgnoreCase("4") && team4Members < maxTeamMembers)
+    		               {
+    		                   Player p = (Player) commandSender;
+    		                   
+    		                   if(!p.hasMetadata("hasTeam"))
+    		                   {
+    		                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                   }
+    		                   
+    		                   if(!p.hasMetadata("Team 4"))
+    		                   {
+    		                       p.setMetadata("Team 4", new FixedMetadataValue(Main.getInstance(), "teams"));
+    		                       team4Members++;
+    		                       p.sendMessage(prefix + "Du bist§e§l Team 4§r§f gejoint!");
+    		                   } else
+    	                       {
+    	                           team4Members--;
+    	                           p.removeMetadata("Team 4", Main.getInstance());
+    	                           p.sendMessage(prefix + "Du hast§e§l Team 4 §r§fverlassen!");
+    	                       }
+    		                   
+    		                   if(p.hasMetadata("Team 1"))
+    		                   {
+    		                       team1Members--;
+    		                       p.removeMetadata("Team 1", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 2"))
+    		                   {
+    		                       team2Members--;
+    		                       p.removeMetadata("Team 2", Main.getInstance());
+    		                   }
+    		                   
+    		                   if(p.hasMetadata("Team 3"))
+    		                   {
+    		                       team3Members--;
+    		                       p.removeMetadata("Team 3", Main.getInstance());
+    		                   }
+    		               } else if(args[2].equalsIgnoreCase("4"))
+    		               {
+    		                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
+    		               }
+    		               
+    			           } else
+    			           {
+    			        	   commandSender.sendMessage(prefix + "§e§lTeams §r§fsind nicht aktiviert!");
+    			           } 
+    		           }
+    			    } else
+    			    {
+    			    	commandSender.sendMessage(prefix + "Falsche Argumente!");
+    			    }
+    			}
+    			
+    		} else
+    		{
+    			commandSender.sendMessage(prefix + "Falsche Argumente!");
+    		}
+    	}
 
         if(commandInput.equalsIgnoreCase("remake"))
         {
@@ -117,271 +487,19 @@ public class Commands implements CommandExecutor
 
         if(commandInput.equalsIgnoreCase("secret"))
         {
-            if(args.length == 4 && args[0].equalsIgnoreCase(Main.getInstance().getConfig().getString("secret.command")))
+            if(args.length == 6 && args[0].equalsIgnoreCase(Main.getInstance().getConfig().getString("secret.command")))
             {
-                Location craftingLoc = new Location(Bukkit.getWorld("world"), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-                Player p = (Player) commandSender;
-                p.teleport(craftingLoc);
+            	Player p = (Player) commandSender;
+                Location locToTeleportTo = new Location(Bukkit.getServer().getWorld(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+                p.teleport(locToTeleportTo);
             } else
             {
-                commandSender.sendMessage(prefix + "Du rauchst 4 Argumente!");
-            }
-        }
-        
-        if(commandInput.equalsIgnoreCase("team") && !playing || commandInput.equalsIgnoreCase("teams") && !playing)
-        {
-            if(args.length >= 1)
-            {    
-                if(args[0].equalsIgnoreCase("toggle") && commandSender.isOp())
-                {
-                    teamsEnabled = !teamsEnabled;
-                    if(teamsEnabled)
-                    {
-                        commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §aaktiviert§f!");
-                    } else
-                    {
-                    	for(Player p : Bukkit.getServer().getOnlinePlayers())
-                    	{
-                    		if(p.hasMetadata("hasTeam"))
-                            {
-                                if(p.hasMetadata("Team 1"))
-                                {
-                                    p.removeMetadata("Team 1", Main.getInstance());
-                                } else if(p.hasMetadata("Team 2"))
-                                {
-                                    p.removeMetadata("Team 2", Main.getInstance());
-                                } else if(p.hasMetadata("Team 3"))
-                                {
-                                    p.removeMetadata("Team 3", Main.getInstance());
-                                } else if(p.hasMetadata("Team 4"))
-                                {
-                                    p.removeMetadata("Team 4", Main.getInstance());
-                                }
-                            }
-                    		p.removeMetadata("hasTeam", Main.getInstance());
-                    	}
-                        commandSender.sendMessage(prefix + "Du hast §e§lTeams§r§f §cdeaktivert§f!");
-                    }
-                }
-                
-                if(args[0].equalsIgnoreCase("reset") || args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("none"))
-                {
-                    Player p = (Player) commandSender;  //  p.setMetadata("wannaremake", new FixedMetadataValue(Main.getInstance(), "yes!"));
-                    
-                    if(p.hasMetadata("hasTeam"))
-                    {
-                        if(p.hasMetadata("Team 1"))
-                        {
-                            p.removeMetadata("Team 1", Main.getInstance());
-                        } else if(p.hasMetadata("Team 2"))
-                        {
-                            p.removeMetadata("Team 2", Main.getInstance());
-                        } else if(p.hasMetadata("Team 3"))
-                        {
-                            p.removeMetadata("Team 3", Main.getInstance());
-                        } else if(p.hasMetadata("Team 4"))
-                        {
-                            p.removeMetadata("Team 4", Main.getInstance());
-                        }
-                        p.removeMetadata("hasTeam", Main.getInstance());
-                    }
-                    
-                    p.sendMessage(prefix + "Du hast dein §e§lTeam§r§f zurückgesetzt!");
-                }
-                
-                if(args[0].equalsIgnoreCase("join"))
-                {
-                    if(teamsEnabled)
-                    {
-                        if(args[1].equalsIgnoreCase("1") && team1Members < maxTeamMembers)
-                        {
-                            Player p = (Player) commandSender;  //  p.setMetadata("wannaremake", new FixedMetadataValue(Main.getInstance(), "yes!"));
-                            
-                            if(!p.hasMetadata("hasTeam"))
-                            {
-                                p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
-                            }
-                            
-                            if(!p.hasMetadata("Team 1"))
-                            {
-                                p.setMetadata("Team 1", new FixedMetadataValue(Main.getInstance(), "teams"));
-                                team1Members++;
-                                p.sendMessage(prefix + "Du bist§e§l Team 1§r§f gejoint!");
-                            } else
-                            {
-                                team1Members--;
-                                p.removeMetadata("Team 1", Main.getInstance());
-                                p.sendMessage(prefix + "Du hast§e§l Team 1 §r§fverlassen!");
-                            }
-                            
-                            if(p.hasMetadata("Team 2"))
-                            {
-                                team2Members--;
-                                p.removeMetadata("Team 2", Main.getInstance());
-                            }
-                            
-                            if(p.hasMetadata("Team 3"))
-                            {
-                                team3Members--;
-                                p.removeMetadata("Team 3", Main.getInstance());
-                            }
-                            
-                            if(p.hasMetadata("Team 4"))
-                            {
-                                team4Members--;
-                                p.removeMetadata("Team 4", Main.getInstance());
-                            }
-                    } else if(args[1].equalsIgnoreCase("1"))
-                    {
-                        commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
-                    }
-                        
-               
-	               if(args[1].equalsIgnoreCase("2") && team2Members < maxTeamMembers)
-	               {
-	                   Player p = (Player) commandSender;
-	                   
-	                   if(!p.hasMetadata("hasTeam"))
-	                   {
-	                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                   }
-	                   
-	                   if(!p.hasMetadata("Team 2"))
-	                   {
-	                       p.setMetadata("Team 2", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                       team2Members++;
-	                       p.sendMessage(prefix + "Du bist§e§l Team 2§r§f gejoint!");
-	                   } else
-                       {
-                           team2Members--;
-                           p.removeMetadata("Team 2", Main.getInstance());
-                           p.sendMessage(prefix + "Du hast§e§l Team 2 §r§fverlassen!");
-                       }
-	                   
-	                   if(p.hasMetadata("Team 1"))
-	                   {
-	                       team1Members--;
-	                       p.removeMetadata("Team 1", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 3"))
-	                   {
-	                       team3Members--;
-	                       p.removeMetadata("Team 3", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 4"))
-	                   {
-	                       team4Members--;
-	                       p.removeMetadata("Team 4", Main.getInstance());
-	                   }
-	               } else if(args[1].equalsIgnoreCase("2"))
-	               {
-	                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
-	               }
-	               
-	               
-	               if(args[1].equalsIgnoreCase("3") && team3Members < maxTeamMembers)
-	               {
-	                   Player p = (Player) commandSender;
-	                   
-	                   if(!p.hasMetadata("hasTeam"))
-	                   {
-	                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                   }
-	                   
-	                   if(!p.hasMetadata("Team 3"))
-	                   {
-	                       p.setMetadata("Team 3", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                       team3Members++;
-	                       p.sendMessage(prefix + "Du bist§e§l Team 3§r§f gejoint!");
-	                   } else
-                       {
-                           team3Members--;
-                           p.removeMetadata("Team 3", Main.getInstance());
-                           p.sendMessage(prefix + "Du hast§e§l Team 3 §r§fverlassen!");
-                       }
-	                   
-	                   if(p.hasMetadata("Team 1"))
-	                   {
-	                       team1Members--;
-	                       p.removeMetadata("Team 1", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 2"))
-	                   {
-	                       team2Members--;
-	                       p.removeMetadata("Team 2", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 4"))
-	                   {
-	                       team4Members--;
-	                       p.removeMetadata("Team 4", Main.getInstance());
-	                   }
-	               } else if(args[1].equalsIgnoreCase("3"))
-	               {
-	                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
-	               }
-	               
-	               
-	               if(args[1].equalsIgnoreCase("4") && team4Members < maxTeamMembers)
-	               {
-	                   Player p = (Player) commandSender;
-	                   
-	                   if(!p.hasMetadata("hasTeam"))
-	                   {
-	                       p.setMetadata("hasTeam", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                   }
-	                   
-	                   if(!p.hasMetadata("Team 4"))
-	                   {
-	                       p.setMetadata("Team 4", new FixedMetadataValue(Main.getInstance(), "teams"));
-	                       team4Members++;
-	                       p.sendMessage(prefix + "Du bist§e§l Team 4§r§f gejoint!");
-	                   } else
-                       {
-                           team4Members--;
-                           p.removeMetadata("Team 4", Main.getInstance());
-                           p.sendMessage(prefix + "Du hast§e§l Team 4 §r§fverlassen!");
-                       }
-	                   
-	                   if(p.hasMetadata("Team 1"))
-	                   {
-	                       team1Members--;
-	                       p.removeMetadata("Team 1", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 2"))
-	                   {
-	                       team2Members--;
-	                       p.removeMetadata("Team 2", Main.getInstance());
-	                   }
-	                   
-	                   if(p.hasMetadata("Team 3"))
-	                   {
-	                       team3Members--;
-	                       p.removeMetadata("Team 3", Main.getInstance());
-	                   }
-	               } else if(args[1].equalsIgnoreCase("4"))
-	               {
-	                   commandSender.sendMessage(prefix + "Dieses §e§lTeam§r§f ist voll!");
-	               }
-	               
-		           } else
-		           {
-		        	   commandSender.sendMessage(prefix + "§e§lTeams §r§fsind nicht aktiviert!");
-		           } 
-	           }
-            } else
-            {
-            	commandSender.sendMessage(prefix + "Falsche Argumente!");
+                commandSender.sendMessage(prefix + "Du rauchst 5 Argumente!");
             }
         }
 
         if(commandSender.isOp())
         {
-
             if (commandInput.equalsIgnoreCase("teleport"))
             {
                 if(args.length >= 1)
@@ -415,115 +533,6 @@ public class Commands implements CommandExecutor
                 {
                     commandSender.sendMessage(prefix + "Falsche Argumente!");
                 }
-            }
-            
-            if(commandInput.equalsIgnoreCase("startuhc"))
-            {
-                if(!playing)
-                {
-                    Bukkit.getServer().broadcastMessage(prefix + "Das §aSpiel§f §e§l§n§ostartet!§r§f Es wird kurz §c§llaggen§r§f!");
-                    uhcWorld = getSaltString();
-                    createWorld(uhcWorld);
-                    loc = new Location(Bukkit.getWorld(uhcWorld), 0, 55, 0);
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "parkour peod");
-                    for(Player p : Main.getInstance().getServer().getOnlinePlayers())
-                    {
-                        p.setExp(0f);
-                        p.getInventory().clear();
-                        for (PotionEffect effect : p.getActivePotionEffects())
-                        {
-                            p.removePotionEffect(effect.getType());
-                        }
-                        readyPlayers = 0;
-                        
-                        if(Main.getInstance().getConfig().getBoolean("starter.items"))
-                        {
-                        	p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item1"))));
-                            p.getInventory().addItem(new ItemStack(Material.getMaterial(Main.getInstance().getConfig().getString("starter.item2"))));
-                        }
-                        
-                        p.removeMetadata("isReady", Main.getInstance());
-                        p.setHealth(20f);
-                        p.setFoodLevel(20);
-                        p.setExp(0);
-                        p.setLevel(0);
-                        p.setGameMode(GameMode.SURVIVAL);
-                        p.teleport(loc);
-                        Bukkit.getServer().getWorld(uhcWorld).setPVP(pvp);
-                    }
-
-                    protectionTime = Main.getInstance().getConfig().getInt("protection.time");
-
-                    alivePlayers = Bukkit.getServer().getOnlinePlayers().size();
-                    World world = Bukkit.getServer().getWorld(uhcWorld);
-                    world.getWorldBorder().setCenter(0, 0);
-                    world.getWorldBorder().setSize(150*alivePlayers);
-                    Bukkit.getServer().broadcastMessage(prefix + "Die §4§lBORDER§f§r ist §6" + (int) world.getWorldBorder().getSize() + " §f§rBlöcke im §nDurchmesser§r groÃ?");
-
-                    Bukkit.getServer().broadcastMessage(prefix + "Das §aSpiel§f hat soeben §l§agestartet§r§f.");
-                    playing = true;
-                } else {
-                    commandSender.sendMessage(prefix + "Du hast bereits ein §aSpiel§f gestartet!");
-                }
-            }
-
-            if(commandInput.equalsIgnoreCase("autostartuhc"))
-            {
-                autoStart = true;
-                if(args.length == 0)
-                {
-                    startAmountPlayers = 4;
-                    autoStartSeconds = 60;
-                } else if(args.length == 1)
-                {
-                    startAmountPlayers = Integer.parseInt(args[0]);
-                    autoStartSeconds = 60;
-                } else if(args.length == 2)
-                {
-                    startAmountPlayers = Integer.parseInt(args[0]);
-                    autoStartSeconds = Integer.parseInt(args[1]);
-                }
-                uhcWorld = getSaltString();
-                commandSender.sendMessage(prefix + "Du willst dass das §aSpiel§f in " + args[1] + "s startet.");
-            }
-
-            if(commandInput.equalsIgnoreCase("toggleautostart"))
-            {
-                autoStart = !autoStart;
-                if(autoStart)
-                {
-                    Bukkit.getServer().broadcastMessage(prefix + "Der §1Countdown§f wurde §a§lgestartet§r§f!");
-                }
-                if(!autoStart)
-                {
-                    Bukkit.getServer().broadcastMessage(prefix + "Der §1Countdown§f wurde §4§lgestoppt§r§f!");
-                }
-            }
-
-            if(commandInput.equalsIgnoreCase("enduhc"))
-            {
-                playing = false;
-                for(Player p : Bukkit.getServer().getOnlinePlayers())
-                {
-                    lobbyLocation = new Location(Main.getInstance().getServer().getWorld(Main.getInstance().getConfig().getString("world.lobby")), Main.getInstance().getConfig().getInt("world.x"), Main.getInstance().getConfig().getInt("world.y"), Main.getInstance().getConfig().getInt("world.z"));
-                    p.teleport(lobbyLocation);
-                    p.setGameMode(GameMode.ADVENTURE);
-                    p.setExp(0f);
-                    clearArmor(p);
-                    readyPlayers = 0;
-                    p.sendMessage(prefix + "Du wurdest zur §2§lLobby§r§f §nteleportiert§r.");
-                }
-                Bukkit.getServer().broadcastMessage(prefix + "Das Spiel wurde frühzeitig §4beendet§r!");
-            }
-
-            if(commandInput.equalsIgnoreCase("bc"))
-            {
-                StringBuilder message = new StringBuilder(args[0]);
-                for (int arg = 1; arg < args.length; arg++)
-                {
-                    message.append(" ").append(args[arg]);
-                }
-                Bukkit.getServer().broadcastMessage(prefix + "" + message);
             }
 
             if(commandInput.equalsIgnoreCase("heal"))
