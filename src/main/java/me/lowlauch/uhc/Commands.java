@@ -87,9 +87,9 @@ public class Commands implements CommandExecutor
                     {
                         startAmountPlayers = Integer.parseInt(args[1]);
                         autoStartSeconds = Integer.parseInt(args[2]);
+                        commandSender.sendMessage(prefix + "Du willst dass das §aSpiel§f in " + args[2] + "s startet.");
                     }
                     uhcWorld = getSaltString();
-                    commandSender.sendMessage(prefix + "Du willst dass das §aSpiel§f in " + args[2] + "s startet.");
     			}
     			
     			if(args[0].equalsIgnoreCase("toggleautostart"))
