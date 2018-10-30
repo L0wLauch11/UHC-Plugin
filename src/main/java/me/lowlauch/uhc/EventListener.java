@@ -457,7 +457,7 @@ public class EventListener implements Listener
 
             if(clickedItem.getItemMeta().getDisplayName().equals("§7Crafting Rezepte"))
             {
-                Bukkit.dispatchCommand(p, "secret " + Main.getInstance().getConfig().getString("secret.command") + " -303 32 198");
+                Bukkit.dispatchCommand(p, "secret " + Main.getInstance().getConfig().getString("secret.command") + " lobbyWorld -303 32 198");
             }
             
             if(clickedItem.getItemMeta().getDisplayName().contains("Team 1"))

@@ -117,14 +117,14 @@ public class Commands implements CommandExecutor
 
         if(commandInput.equalsIgnoreCase("secret"))
         {
-            if(args.length == 4 && args[0].equalsIgnoreCase(Main.getInstance().getConfig().getString("secret.command")))
+            if(args.length == 5 && args[0].equalsIgnoreCase(Main.getInstance().getConfig().getString("secret.command")))
             {
             	Player p = (Player) commandSender;
-                Location locToTeleportTo = new Location(p.getWorld(), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                Location locToTeleportTo = new Location(Bukkit.getServer().getWorld(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
                 p.teleport(locToTeleportTo);
             } else
             {
-                commandSender.sendMessage(prefix + "Du rauchst 4 Argumente!");
+                commandSender.sendMessage(prefix + "Du rauchst 5 Argumente!");
             }
         }
         
