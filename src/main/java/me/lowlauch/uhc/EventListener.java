@@ -465,25 +465,25 @@ public class EventListener implements Listener
             
             if(clickedItem.getItemMeta().getDisplayName().contains("Team 1"))
             {
-                Bukkit.dispatchCommand(p, "team join 1");
+                Bukkit.dispatchCommand(p, "uhc team join 1");
                 p.closeInventory();
             }
             
             if(clickedItem.getItemMeta().getDisplayName().contains("Team 2"))
             {
-                Bukkit.dispatchCommand(p, "team join 2");
+                Bukkit.dispatchCommand(p, "uhc team join 2");
                 p.closeInventory();
             }
             
             if(clickedItem.getItemMeta().getDisplayName().contains("Team 3"))
             {
-                Bukkit.dispatchCommand(p, "team join 3");
+                Bukkit.dispatchCommand(p, "uhc team join 3");
                 p.closeInventory();
             }
             
             if(clickedItem.getItemMeta().getDisplayName().contains("Team 4"))
             {
-                Bukkit.dispatchCommand(p, "team join 4");
+                Bukkit.dispatchCommand(p, "uhc team join 4");
                 p.closeInventory();
             }
         }
