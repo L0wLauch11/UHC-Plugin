@@ -451,7 +451,7 @@ public class EventListener implements Listener
 
             if(clickedItem.getItemMeta().getDisplayName().equals("§4Lobby"))
             {
-                Bukkit.dispatchCommand(p, "secret " + Main.getInstance().getConfig().getString("secret.command") + " -252 135 267");
+                p.teleport(lobbyLocation);
                 p.getInventory().clear();
             }
 
