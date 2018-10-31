@@ -11,7 +11,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
@@ -435,7 +434,6 @@ public class EventListener implements Listener
     public void onInventoryClick(InventoryClickEvent event)
     {
         Player p = (Player) event.getWhoClicked();
-        ClickType clickType = event.getClick();
         Inventory thisInv = event.getClickedInventory();
         ItemStack clickedItem = event.getCurrentItem();
 
@@ -446,19 +444,19 @@ public class EventListener implements Listener
                 return;
             }
 
-            if(clickedItem.getItemMeta().getDisplayName().equals("§9Snowball"))
+            if(clickedItem.getItemMeta().getDisplayName().contains("Snowball"))
             {
                 Bukkit.dispatchCommand(p, "snowball lobby");
                 Bukkit.dispatchCommand(p, "snowball kit");
             }
 
-            if(clickedItem.getItemMeta().getDisplayName().equals("§4Lobby"))
+            if(clickedItem.getItemMeta().getDisplayName().contains("Lobby"))
             {
                 p.teleport(lobbyLocation);
                 p.getInventory().clear();
             }
 
-            if(clickedItem.getItemMeta().getDisplayName().equals("§7Crafting Rezepte"))
+            if(clickedItem.getItemMeta().getDisplayName().contains("Crafting"))
             {
                 Bukkit.dispatchCommand(p, "secret " + Main.getInstance().getConfig().getString("secret.command") + " lobbyWorld -303 32 198");
             }
