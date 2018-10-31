@@ -3,6 +3,7 @@ package me.lowlauch.uhc;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.util.Random;
 
 import static me.lowlauch.uhc.Commands.world;
@@ -14,6 +15,21 @@ public class UsefulScripts
         world = Bukkit.getWorld(name);
         return world == null ? Bukkit.createWorld(new WorldCreator(name)) : world;
     }
+    
+	public static boolean deleteWorld(File path)
+	{
+	      if(path.exists()) {
+	          File files[] = path.listFiles();
+	          for(int i=0; i<files.length; i++) {
+	              if(files[i].isDirectory()) {
+	                  deleteWorld(files[i]);
+	              } else {
+	                  files[i].delete();
+	              }
+	          }
+	      }
+	      return(path.delete());
+	}
 
     public static String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

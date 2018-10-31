@@ -16,7 +16,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 import static me.lowlauch.uhc.Commands.*;
@@ -311,6 +310,12 @@ public class EventListener implements Listener
                     p.setFoodLevel(20);
                     p.setHealth(20f);
                 }
+                World world = Bukkit.getWorld(uhcWorld);
+			    if(!world.equals(null))
+			    {
+			        Bukkit.getServer().unloadWorld(world, true);
+			        UsefulScripts.deleteWorld(world.getWorldFolder());
+			    }
                 playing = false;
             }
             
