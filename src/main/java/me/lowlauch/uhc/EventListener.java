@@ -429,7 +429,7 @@ public class EventListener implements Listener
             Bukkit.getServer().dispatchCommand(event.getPlayer(), "uhc ready");
         }
         
-        if(event.getMaterial() == Material.COMPASS)
+        if(event.getMaterial() == Material.COMPASS && !playing)
         {
         	newInventory(event.getPlayer());
         }
@@ -458,6 +458,7 @@ public class EventListener implements Listener
             if(clickedItem.getItemMeta().getDisplayName().contains("Lobby"))
             {
                 p.teleport(lobbyLocation);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spawnpoint " + p.getDisplayName() + " ~ ~ ~");
                 p.getInventory().clear();
             }
 
